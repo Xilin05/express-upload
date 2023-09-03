@@ -51,7 +51,7 @@ app.use((err, req, res, next) => {
   res.status(500).render('500')
 })
 
-const port = 5012
+const port = 39008
 
 app.listen(port, '127.0.0.1', () => {
   console.log(`服务已启动，访问地址：http://127.0.0.1:${port}`)
