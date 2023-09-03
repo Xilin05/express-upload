@@ -54,5 +54,5 @@ app.use((err, req, res, next) => {
 const port = 5012
 
 app.listen(port, '127.0.0.1', () => {
-  console.log(`服务已启动，访问地址：http://localhost:${port}`)
+  console.log(`服务已启动，访问地址：http://127.0.0.1:${port}`)
 })
