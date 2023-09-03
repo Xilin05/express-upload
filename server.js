@@ -51,8 +51,10 @@ app.use((err, req, res, next) => {
   res.status(500).render('500')
 })
 
-const port = 39008
+const port = 5012
+// const hostName = '0.0.0.0'
 
-app.listen(port, '127.0.0.1', () => {
-  console.log(`服务已启动，访问地址：http://127.0.0.1:${port}`)
+app.listen(port, () => {
+  console.log(`服务已启动，访问端口地址：${port}`)
+  // console.log(`服务已启动，访问地址：http://${hostName}:${port}`)
 })
