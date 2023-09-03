@@ -6,7 +6,7 @@ const router = express.Router()
 const UploadController = require('../../controllers/UploadController')
 
 router.get('/list', async (req, res) => {
-  const result = await enumLoopAction.LoopFiles()
+  const result = await enumLoopAction.LoopFiles({ req })
   const response = {
     data: result,
     code: 200,
@@ -24,6 +24,7 @@ router.get('/files', (req, res) => {
 router.get('/download', (req, res) => {
   const file_name = req.query.file_name
   const file_path = process.cwd() + '/public/upload/' + file_name
+  console.log('req.query.file_name', file_path)
   res.download(file_path)
   // res.send('upload get')
 })

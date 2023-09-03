@@ -1,13 +1,17 @@
 const fs = require('fs')
 
-function LoopFiles(dirPath = 'public/upload') {
+function LoopFiles({ dirPath = 'public/upload', req, res }) {
   // const res = fs.readdirSync(dirPath)
+  // console.log('loopfiles req', req.rawHeaders)
+  // console.log('req.get hose', req.get('Host'), req.protocol)
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
       const fileNameList =
         files.map(m => {
           const info = fs.statSync(`${dirPath}/${m}`)
           return {
+            uid: GenNonDuplicateID(),
+            img_url: `${req.protocol}://${req.get('Host')}/public/upload/${m}`,
             size: formatSize(info.size),
             name: m?.split('-time-')?.[1],
             timestamp: new Date(info.atime).getTime(),
@@ -36,6 +40,12 @@ function formatSize(size, pointLength, units) {
     size = size / 1024
   }
   return (unit === 'B' ? size : size.toFixed(pointLength || 2)) + unit
+}
+
+function GenNonDuplicateID(randomLength = 10) {
+  let idStr = Date.now().toString(36)
+  idStr += Math.random().toString(36).substr(3, randomLength)
+  return idStr
 }
 
 const hanldeImgDelAndRename = (id, filename, dirPath) => {
