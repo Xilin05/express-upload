@@ -19,12 +19,16 @@ class UploadController {
   async uploadFiles(req, res) {
     try {
       const uploadRes = await uploadActions.uploadImages(req, res)
-      res.send({
-        meta: { code: 200, msg: '上传成功！' },
-        data: { img_urls: uploadRes }
-      })
+
+      const response = {
+        data: { img_urls: uploadRes },
+        code: 200,
+        message: '上传成功！'
+      }
+      res.sendResult(response)
     } catch (error) {
-      res.send(error)
+      console.log('error', error)
+      res.sendResult(error)
     }
   }
 }

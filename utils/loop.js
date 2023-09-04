@@ -9,13 +9,14 @@ function LoopFiles({ dirPath = 'public/upload', req, res }) {
       const fileNameList =
         files.map(m => {
           const info = fs.statSync(`${dirPath}/${m}`)
+
           return {
             uid: GenNonDuplicateID(),
             img_url: `${req.protocol}://${req.get('Host')}/public/upload/${m}`,
             size: formatSize(info.size),
             name: m?.split('-time-')?.[1],
-            timestamp: new Date(info.atime).getTime(),
-            create_time: new Date(info.atime).toLocaleString()
+            timestamp: new Date(info.ctime).getTime(),
+            create_time: new Date(info.ctime).toLocaleString()
           }
         }) || []
 
