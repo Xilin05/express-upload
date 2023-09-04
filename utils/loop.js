@@ -3,7 +3,7 @@ const fs = require('fs')
 function LoopFiles({ dirPath = 'public/upload', req, res }) {
   // const res = fs.readdirSync(dirPath)
   // console.log('loopfiles req', req.rawHeaders)
-  // console.log('req.get hose', req.get('Host'), req.protocol)
+  console.log('req.get host', req.get('Host'), req.protocol)
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
       const fileNameList =
