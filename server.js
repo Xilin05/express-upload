@@ -3,6 +3,15 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = express()
 
+var fs = require('fs')
+var https = require('https')
+
+// 此处是你的ssl证书文件
+var privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
+// 此处是你的ssl证书文件
+var certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
+var credentials = { key: privateKey, cert: certificate }
+
 app.set('views', 'views')
 app.set('view engine', 'hbs')
 
@@ -51,11 +60,14 @@ app.use('*', (req, res) => {
 app.use((err, req, res, next) => {
   res.status(500).render('500')
 })
+// app.listen(port, () => {
+//   console.log(`服务已启动，访问端口地址：${httpsPort}`)
+//   // console.log(`服务已启动，访问地址：http://${hostName}:${port}`)
+// })
 
-const port = 5012
-// const hostName = '0.0.0.0'
-
-app.listen(port, () => {
-  console.log(`服务已启动，访问端口地址：${port}`)
-  // console.log(`服务已启动，访问地址：http://${hostName}:${port}`)
+const hostName = '0.0.0.0'
+const httpsPort = 5012
+var httpsServer = https.createServer(credentials, app)
+httpsServer.listen(httpsPort, () => {
+  console.log(`服务已启动，访问端口地址：${httpsPort}`)
 })
