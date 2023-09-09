@@ -7,7 +7,7 @@ function LoopFiles({ dirPath = 'public/upload', req, res }) {
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
       const fileNameList =
-        files.map(m => {
+        files?.map(m => {
           const info = fs.statSync(`${dirPath}/${m}`)
 
           return {
@@ -22,7 +22,11 @@ function LoopFiles({ dirPath = 'public/upload', req, res }) {
 
       fileNameList.sort((a, b) => b.timestamp - a.timestamp)
 
-      resolve(fileNameList)
+      if (err) {
+        reject(err)
+      } else {
+        resolve(fileNameList)
+      }
     })
   })
 }

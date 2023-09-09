@@ -2,15 +2,15 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = express()
+require('express-async-errors')
 
 var fs = require('fs')
 var https = require('https')
 
-// 此处是你的ssl证书文件
-var privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
-// 此处是你的ssl证书文件
-var certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
-var credentials = { key: privateKey, cert: certificate }
+// 解析表单
+// for parsing application/x-www-form-urlencoded
+// app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: false }))
 
 app.set('views', 'views')
 app.set('view engine', 'hbs')
@@ -18,16 +18,12 @@ app.set('view engine', 'hbs')
 app.use(cors())
 app.use('/public/', express.static('public'))
 app.use(express.json())
-app.use(bodyParser.json())
-// 解析表单
-// for parsing application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }))
-
-const logger = require('./utils/logger')
-app.use(logger)
 
 const resextra = require('./utils/resextra')
 app.use(resextra)
+
+const logger = require('./utils/logger')
+app.use(logger)
 
 // 允许跨域
 // app.all('*', function (req, res, next) {
@@ -57,17 +53,28 @@ app.use('*', (req, res) => {
   res.status(404).render('404', { url: req.originalUrl })
 })
 
-app.use((err, req, res, next) => {
-  res.status(500).render('500')
-})
-// app.listen(port, () => {
-//   console.log(`服务已启动，访问端口地址：${httpsPort}`)
-//   // console.log(`服务已启动，访问地址：http://${hostName}:${port}`)
+// app.use((err, req, res, next) => {
+//   res.status(500).render('500')
 // })
 
-const hostName = '0.0.0.0'
-const httpsPort = 5012
-var httpsServer = https.createServer(credentials, app)
-httpsServer.listen(httpsPort, () => {
-  console.log(`服务已启动，访问端口地址：${httpsPort}`)
+const ErrorCatch = require('./utils/async-errors')
+app.use(ErrorCatch)
+
+const port = 5012
+app.listen(port, () => {
+  console.log(`服务已启动，访问端口地址：${port}`)
+  // console.log(`服务已启动，访问地址：http://${hostName}:${port}`)
 })
+
+// // 此处是你的ssl证书文件
+// var privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
+// // 此处是你的ssl证书文件
+// var certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
+// var credentials = { key: privateKey, cert: certificate }
+
+// const hostName = '0.0.0.0'
+// const httpsPort = 5012
+// var httpsServer = https.createServer(credentials, app)
+// httpsServer.listen(httpsPort, () => {
+//   console.log(`服务已启动，访问端口地址：${httpsPort}`)
+// })

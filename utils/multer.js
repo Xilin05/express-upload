@@ -1,7 +1,6 @@
 // 1. 引入依赖
 const multer = require('multer')
 const path = require('path')
-
 // 2. 封装处理路径函数
 const handlePath = dir => path.join(__dirname, './', dir)
 

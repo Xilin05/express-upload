@@ -29,6 +29,11 @@ router.get('/download', (req, res) => {
   // res.send('upload get')
 })
 
+router.post('/update/name', (req, res) => {
+  console.log('req', req.body)
+
+  res.sendResult({ code: 200, message: 'qingqiu chenggon' })
+})
 router.post('/image', UploadController.uploadFile)
 router.post('/images', UploadController.uploadFiles)
 

@@ -27,10 +27,11 @@ class UploadController {
       }
       res.sendResult(response)
     } catch (error) {
-      console.log('error', error)
-      res.sendResult(error)
+      res.sendResult({ data: null, code: 400, message: '参数有误' })
     }
   }
+
+  async getImageList(req, res) {}
 }
 
 module.exports = new UploadController()
