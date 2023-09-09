@@ -1,6 +1,7 @@
 // 1. 引入依赖
 const multer = require('multer')
 const path = require('path')
+
 // 2. 封装处理路径函数
 const handlePath = dir => path.join(__dirname, './', dir)
 
@@ -16,6 +17,7 @@ const storage = multer.diskStorage({
       'image/webp'
     ]
     if (enumMimetType.includes(file.mimetype)) {
+      console.log('file', file)
       cb(null, handlePath('../public/upload'))
     } else {
       cb({ error: '仅支持 jpg/jpeg/png/gif/svg/webp 格式的图片！' })
@@ -27,7 +29,10 @@ const storage = multer.diskStorage({
     const fileFormat = file.originalname.split('.')
     // 自定义图片名称
     // cb(null, Date.now() + '.' + fileFormat[fileFormat.length - 1])
-    const fileName = Date.now() + '-time-' + file.originalname
+    const fileName =
+      Date.now() +
+      '-time-' +
+      Buffer.from(file.originalname, 'latin1').toString('utf8')
     cb(null, fileName)
   }
 })
