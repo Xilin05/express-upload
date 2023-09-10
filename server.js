@@ -62,17 +62,17 @@ app.use('*', (req, res) => {
 const ErrorCatch = require('./utils/async-errors')
 app.use(ErrorCatch)
 
-const port = 5012
-app.listen(port, () => {
-  console.log(`服务已启动，访问端口地址：${port}`)
-})
-
-// const privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
-// const certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
-// const credentials = { key: privateKey, cert: certificate }
-
-// const httpsPort = 5012
-// const httpsServer = https.createServer(credentials, app)
-// httpsServer.listen(httpsPort, () => {
-//   console.log(`服务已启动，访问端口地址：${httpsPort}`)
+// const port = 5012
+// app.listen(port, () => {
+//   console.log(`服务已启动，访问端口地址：${port}`)
 // })
+
+const privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
+const certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
+const credentials = { key: privateKey, cert: certificate }
+
+const httpsPort = 5012
+const httpsServer = https.createServer(credentials, app)
+httpsServer.listen(httpsPort, () => {
+  console.log(`服务已启动，访问端口地址：${httpsPort}`)
+})
