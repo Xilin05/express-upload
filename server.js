@@ -39,9 +39,11 @@ app.use(logger)
 //   else next()
 // })
 
+const System = require('./router/system')
 const Upload = require('./router/upload')
 const User = require('./router/user')
 
+app.use('/system', System)
 app.use('/upload', Upload)
 app.use('/user', User)
 
@@ -60,20 +62,17 @@ app.use('*', (req, res) => {
 const ErrorCatch = require('./utils/async-errors')
 app.use(ErrorCatch)
 
-// const port = 5012
-// app.listen(port, () => {
-//   console.log(`服务已启动，访问端口地址：${port}`)
-// })
-
-// 此处是你的ssl证书文件
-const privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
-// 此处是你的ssl证书文件
-const certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
-const credentials = { key: privateKey, cert: certificate }
-
-const hostName = '0.0.0.0'
-const httpsPort = 5012
-const httpsServer = https.createServer(credentials, app)
-httpsServer.listen(httpsPort, () => {
-  console.log(`服务已启动，访问端口地址：${httpsPort}`)
+const port = 5012
+app.listen(port, () => {
+  console.log(`服务已启动，访问端口地址：${port}`)
 })
+
+// const privateKey = fs.readFileSync('./bin/dingding.shining98.top.key')
+// const certificate = fs.readFileSync('./bin/dingding.shining98.top_bundle.pem')
+// const credentials = { key: privateKey, cert: certificate }
+
+// const httpsPort = 5012
+// const httpsServer = https.createServer(credentials, app)
+// httpsServer.listen(httpsPort, () => {
+//   console.log(`服务已启动，访问端口地址：${httpsPort}`)
+// })

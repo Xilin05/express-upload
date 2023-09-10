@@ -1,0 +1,40 @@
+{
+  "current_version": "v1.3.0_20230910",
+  "version_history": [
+    {
+      "id": "v1.0.0_20230904hadjbfk04",
+      "version": "v1.0.0_20230904",
+      "publish_time": "2023年9月4日 23:37",
+      "publisher": "shining Lai",
+      "publish_remark": "上传项目初始化，支持点击上传，文件列表展示，点击小图可查看大图。"
+    },
+    {
+      "id": "v1.1.0_20230905tjd5aqukk",
+      "version": "v1.1.0_20230905",
+      "publish_time": "2023年9月5日 03:07",
+      "publisher": "shining Lai",
+      "publish_remark": "支持拖拽上传功能。"
+    },
+    {
+      "id": "v1.2.0_2023090784crnmz0r",
+      "version": "v1.2.0_20230907",
+      "publish_time": "2023年9月7日 17:01",
+      "publisher": "shining Lai",
+      "publish_remark": "新增上传预览与loading上传效果，提升用户体验"
+    },
+    {
+      "id": "v1.2.1_20230910g593yca8g",
+      "version": "v1.2.1_20230910",
+      "publish_time": "2023年9月10日 18:16",
+      "publisher": "shining Lai",
+      "publish_remark": "完善文件上传界面交互，达到80%预期效果。"
+    },
+    {
+      "id": "v1.3.0_20230910lm551ulpt",
+      "version": "v1.3.0_20230910",
+      "publish_time": "2023年9月10日 23:11",
+      "publisher": "shining Lai",
+      "publish_remark": "新增项目版本信息接口"
+    }
+  ]
+}
