@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
       'image/webp'
     ]
     if (enumMimetType.includes(file.mimetype)) {
-      console.log('file', file)
+      // console.log('file', file)
       cb(null, handlePath('../public/upload'))
     } else {
       cb({ error: '仅支持 jpg/jpeg/png/gif/svg/webp 格式的图片！' })

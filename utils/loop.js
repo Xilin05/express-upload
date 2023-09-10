@@ -7,18 +7,26 @@ function LoopFiles({ dirPath = 'public/upload', req, res }) {
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
       const fileNameList =
-        files?.map(m => {
-          const info = fs.statSync(`${dirPath}/${m}`)
-
-          return {
-            uid: GenNonDuplicateID(),
-            img_url: `${req.protocol}://${req.get('Host')}/public/upload/${m}`,
-            size: formatSize(info.size),
-            name: m?.split('-time-')?.[1],
-            timestamp: new Date(info.ctime).getTime(),
-            create_time: new Date(info.ctime).toLocaleString()
-          }
-        }) || []
+        files
+          ?.map(m => {
+            const info = fs.statSync(`${dirPath}/${m}`)
+            if (!info.isDirectory()) {
+              return {
+                uid: GenNonDuplicateID(),
+                img_url: `${req.protocol}://${req.get(
+                  'Host'
+                )}/public/upload/${m}`,
+                img_url_temp: `${req.protocol}://${req.get(
+                  'Host'
+                )}/public/upload/temp/${m}`,
+                size: formatSize(info.size),
+                name: m?.split('-time-')?.[1],
+                timestamp: new Date(info.ctime).getTime(),
+                create_time: new Date(info.ctime).toLocaleString()
+              }
+            }
+          })
+          ?.filter(f => f) || []
 
       fileNameList.sort((a, b) => b.timestamp - a.timestamp)
 
@@ -40,7 +48,7 @@ function LoopFiles({ dirPath = 'public/upload', req, res }) {
 
 function formatSize(size, pointLength, units) {
   var unit
-  units = units || ['B', 'K', 'M', 'G', 'TB']
+  units = units || ['B', 'KB', 'MB', 'GB', 'TB']
   while ((unit = units.shift()) && size > 1024) {
     size = size / 1024
   }

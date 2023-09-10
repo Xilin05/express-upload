@@ -2,11 +2,19 @@
 const multerConfig = require('./multer')
 const path = require('path')
 const fs = require('fs')
+const fsPromises = require('fs/promises')
+
+const imagemin = require('imagemin')
+const imageminJpegtran = require('imagemin-jpegtran')
+const imageminMozjpeg = require('imagemin-mozjpeg')
+const imageminOptipng = require('imagemin-optipng')
+const imageminGifsicle = require('imagemin-gifsicle')
 
 // 上传到服务器地址
 const BaseURL = 'http://127.0.0.1:5012'
 // 上传到服务器的目录
 const imgPath = '/public/upload/'
+const tempImgPath = '/public/upload/temp/'
 
 const handlePath = dir => {
   return path.join(__dirname, './', dir)
@@ -16,25 +24,12 @@ const handlePath = dir => {
 function uploadImage(req, res) {
   return new Promise((resolve, reject) => {
     multerConfig.single('file')(req, res, function (err) {
-      // 判断是否是multer模块内部引擎的异常
-      //   if (err instanceof multer.MulterError) {
-      //     return res.send({
-      //         status: 1,
-      //         msg: "文件上传出现异常，请稍后再试！"
-      //     });
-      //     // 判断是否是其他异常
-      // } else if (err) {
-      //     return res.send({
-      //         status: 1,
-      //         msg: "服务器异常，请联系管理员！"
-      //     });
-      // }
       if (err) {
         // 传递的图片格式错误或者超出文件限制大小，就会reject出去
         reject(err)
       } else {
         // 拼接成完整的服务器静态资源图片路径
-        resolve(BaseURL + imgPath + req.file.filename)
+        resolve(BaseURL + tempImgPath + req.file.filename)
 
         // 对图片进行去重删除和重命名
         // hanldeImgDelAndRename(req.body.id, req.file.filename, handlePath('../../public'))
@@ -51,17 +46,109 @@ function uploadImage(req, res) {
 // 封装上传多个图片的接口
 function uploadImages(req, res) {
   return new Promise((resolve, reject) => {
-    multerConfig.array('file_list')(req, res, function (err) {
+    multerConfig.array('file_list')(req, res, async function (err) {
       if (err) {
         // 传递的图片格式错误或者超出文件限制大小，就会reject出去
         reject(err)
       } else {
-        // 拼接成完整的服务器静态资源图片路径
-        const paths = req.files?.map(m => BaseURL + imgPath + m.filename) || []
-        resolve(paths)
+        const fsError = await fsOperation(req)
+        console.log('fsError', fsError)
+
+        if (!fsError) {
+          // 拼接成完整的服务器静态资源图片路径
+          const paths =
+            req.files?.map(m => BaseURL + imgPath + m.filename) || []
+          resolve(paths)
+        } else {
+          throw new Error(fsError)
+        }
       }
     })
   })
+}
+
+async function handleCompressImage(file) {
+  if (file.mimetype == 'image/png') {
+    return (
+      (await imagemin(['public/upload/' + file.filename], {
+        destination: 'public/upload/temp',
+        plugins: [imageminOptipng({ quality: 5 })]
+      })) || []
+    )
+  }
+
+  if (file.mimetype == 'image/gif') {
+    return (
+      (await imagemin(['public/upload/' + file.filename], {
+        destination: 'public/upload/temp',
+        plugins: [
+          imageminGifsicle({
+            optimizationLevel: setImageQuality(file.size, 'png'),
+            colors: 180
+          })
+        ]
+      })) || []
+    )
+  }
+
+  return (
+    (await imagemin(['public/upload/' + file.filename], {
+      destination: 'public/upload/temp',
+      plugins: [imageminMozjpeg({ quality: setImageQuality(file.size, 'jpg') })]
+    })) || []
+  )
+
+  // imageminJpegtran 调整为渐进式图片，暂时不需要
+  // return (
+  //   (await imagemin(['public/upload/' + file.filename], 'public/upload/temp', {
+  //     use: [imageminJpegtran({ progressive: true })]
+  //   })) || []
+  // )
+}
+
+function fsOperation(req) {
+  return new Promise(async (resolve, reject) => {
+    let tempUrl = path.join(__dirname, '../public/upload/temp/')
+    let mainUrl = path.join(__dirname, '../public/upload/')
+    let fsError = null
+
+    for (let index = 0; index < req?.files?.length; index++) {
+      const element = req?.files[index]
+
+      if (['image/png', 'image/jpeg', 'image/gif'].includes(element.mimetype)) {
+        fsError = fs.writeFileSync(
+          tempUrl + element.filename,
+          (await handleCompressImage(element))[0].data
+        )
+      } else {
+        fsError = fs.renameSync(
+          process.cwd() + '/public/upload/temp/' + element.filename
+        )
+      }
+
+      if (fsError) {
+        reject(fsError)
+        break
+      }
+    }
+
+    resolve(fsError)
+  })
+}
+
+function setImageQuality(size, type) {
+  if (size / 1048576 < 2) {
+    if (type == 'png') return 3
+    if (type == 'jpg') return 100
+  }
+
+  if (size / 1048576 > 9) {
+    if (type == 'png') return 7
+    if (type == 'jpg') return 30
+  }
+
+  if (type == 'png') return 5
+  if (type == 'jpg') return 50
 }
 
 // 对图片进行去重删除和重命名

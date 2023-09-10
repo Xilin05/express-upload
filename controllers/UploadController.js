@@ -19,7 +19,6 @@ class UploadController {
   async uploadFiles(req, res) {
     try {
       const uploadRes = await uploadActions.uploadImages(req, res)
-
       const response = {
         data: { img_urls: uploadRes },
         code: 200,
@@ -27,7 +26,14 @@ class UploadController {
       }
       res.sendResult(response)
     } catch (error) {
-      res.sendResult({ data: null, code: 400, message: '参数有误' })
+      if (err instanceof multer.MulterError) {
+        res.sendResult({
+          code: 502,
+          message: '服务器上传业务出现故障，请联系后端人员处理'
+        })
+      } else {
+        res.sendResult({ data: null, code: 400, message: '参数有误' })
+      }
     }
   }
 
